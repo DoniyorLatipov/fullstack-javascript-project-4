@@ -4,6 +4,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { FlatCompat } from '@eslint/eslintrc';
 import pluginJs from '@eslint/js';
+import importPlugin from 'eslint-plugin-import';
+import jestPlugin from 'eslint-plugin-jest';
 
 // mimic CommonJS variables -- not needed if using CommonJS
 const __filename = fileURLToPath(import.meta.url);
@@ -34,9 +36,6 @@ export default [
     rules: {
       ...importPlugin.configs.recommended.rules,
       ...jestPlugin.configs.recommended.rules,
-    },
-    env: {
-      'jest/globals': true,
     },
   },
   ...compat.extends('airbnb-base'),
