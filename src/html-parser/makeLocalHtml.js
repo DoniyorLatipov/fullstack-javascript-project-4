@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
+import path from 'path';
 import createFilename from '../createFilename.js';
 import prettierHtml from './prettierHtml.js';
-import path from 'path';
 
 export default function makeLocalHtml(data, url, assetsDirname) {
   const $ = cheerio.load(data, { baseURI: url });

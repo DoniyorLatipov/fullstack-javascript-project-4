@@ -1,9 +1,8 @@
-import makeLocalHtml from '../src/html-parser/makeLocalHtml.js';
-import prettierHtml from '../src/html-parser/prettierHtml.js';
-
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import path from 'path';
+import prettierHtml from '../src/html-parser/prettierHtml.js';
+import makeLocalHtml from '../src/html-parser/makeLocalHtml.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

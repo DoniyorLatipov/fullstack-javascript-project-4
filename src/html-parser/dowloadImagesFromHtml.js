@@ -1,10 +1,9 @@
-import createFilename from '../createFilename.js';
-
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import fs from 'fs/promises';
 import _ from 'lodash';
 import path from 'path';
+import createFilename from '../createFilename.js';
 
 export default function dowloadImagesFromHtml(data, url, output) {
   let imagesSrc;

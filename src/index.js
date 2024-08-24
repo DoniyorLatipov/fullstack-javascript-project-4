@@ -1,5 +1,5 @@
-import outputDataTo from './outputDataTo.js';
 import axios from 'axios';
+import outputDataTo from './outputDataTo.js';
 
 export default (url, outputDir) => {
   const parsingPromise = axios
