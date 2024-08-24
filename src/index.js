@@ -1,14 +1,9 @@
-import createPath from './output/createPath.js';
-import fs from 'fs/promises';
+import outputDataTo from './output/outputDataTo.js';
 import axios from 'axios';
 
 export default (url, outputDir) => {
-  axios
+  return axios
     .get(url)
-    .then((response) => {
-      const filepath = createPath(outputDir, url);
-      fs.writeFile(filepath, response.data);
-      return filepath;
-    })
+    .then((response) => outputDataTo(response, outputDir))
     .then((filepath) => console.log(filepath));
 };
