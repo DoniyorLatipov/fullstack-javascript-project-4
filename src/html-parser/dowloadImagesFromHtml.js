@@ -29,7 +29,6 @@ export default function dowloadImagesFromHtml(data, url, output) {
       const writtingPromises = imageBuffers.filter(Boolean).map((buffer, i) => {
         const [noExtnameSrc, extname] = splitByExtname(imagesSrc[i]);
         const filename = createFilename(noExtnameSrc, extname);
-
         const filepath = path.join(output, filename);
         return fs.writeFile(filepath, buffer);
       });
