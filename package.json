@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/DoniyorLatipov/fullstack-javascript-project-4/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DoniyorLatipov/fullstack-javascript-project-4/actions)",
+  "description": "download a web page (with assets) from the internet using HTTP",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -10,14 +10,11 @@
   "scripts": {
     "test": "npx jest"
   },
+  "keywords": [
+    "page-loader"
+  ],
   "author": "LatipovDoniyor",
   "license": "ISC",
-  "dependencies": {
-    "axios": "^1.7.4",
-    "commander": "^12.1.0",
-    "lodash": "^4.17.21",
-    "nock": "^13.5.4"
-  },
   "devDependencies": {
     "@eslint/create-config": "^1.0.0",
     "@eslint/eslintrc": "^3.1.0",
@@ -30,6 +27,14 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "globals": "^15.9.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "nock": "^13.5.5"
+  },
+  "dependencies": {
+    "axios": "^1.7.4",
+    "cheerio": "^1.0.0",
+    "commander": "^12.1.0",
+    "lodash": "^4.17.21",
+    "prettier": "^3.3.3"
   }
 }
