@@ -1,9 +1,10 @@
-import outputDataTo from './output/outputDataTo.js';
+import outputDataTo from './outputDataTo.js';
 import axios from 'axios';
 
 export default (url, outputDir) => {
-  return axios
+  const parsingPromise = axios
     .get(url)
     .then((response) => outputDataTo(response, outputDir))
     .then((filepath) => console.log(filepath));
+  return parsingPromise;
 };
