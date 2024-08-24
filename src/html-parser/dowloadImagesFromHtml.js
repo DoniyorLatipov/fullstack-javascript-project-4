@@ -1,7 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import fs from 'fs/promises';
-import _ from 'lodash';
 import path from 'path';
 import createFilename from '../createFilename.js';
 
