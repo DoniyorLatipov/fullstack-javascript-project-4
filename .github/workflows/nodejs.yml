@@ -1,0 +1,31 @@
+name: Node CI
+on:
+  - push
+  - pull_request
+env:
+  CI: true
+  CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check-out
+        uses: actions/checkout@v4
+
+      - name: install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: node
+          cache: 'npm'
+
+      - run: make install
+      - run: make test
+      - run: make lint
+
+      - name: test and publish code coverage
+        uses: paambaati/codeclimate-action@v5.0.0
+        with:
+          coverageCommand: make test-coverage
+          debug: true
