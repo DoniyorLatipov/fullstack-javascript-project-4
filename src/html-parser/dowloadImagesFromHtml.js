@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import fs from 'fs/promises';
 import path from 'path';
 import createFilename from '../createFilename.js';
+import splitByExtname from '../splitByExtname.js';
 
 export default function dowloadImagesFromHtml(data, url, output) {
   let imagesSrc;
@@ -22,19 +23,16 @@ export default function dowloadImagesFromHtml(data, url, output) {
 
         return downloadingPromise;
       });
-
       return Promise.all(downloadingPromises);
     })
     .then((imageBuffers) => {
       const writtingPromises = imageBuffers.filter(Boolean).map((buffer, i) => {
-        const extname = path.extname(imagesSrc[i]);
-        const noExtnameSrc = imagesSrc[i].slice(0, -extname.length);
+        const [noExtnameSrc, extname] = splitByExtname(imagesSrc[i]);
         const filename = createFilename(noExtnameSrc, extname);
 
         const filepath = path.join(output, filename);
         return fs.writeFile(filepath, buffer);
       });
-
       return Promise.all(writtingPromises);
     });
 }
