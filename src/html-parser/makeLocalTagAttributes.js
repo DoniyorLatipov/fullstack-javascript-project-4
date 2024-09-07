@@ -5,7 +5,8 @@ import compareUrlsByHostname from '../url/compareUrlsByHostname.js';
 
 export default function makeLocalTagAttributes(CheerioAPI, tag, attribute, assetsDirname) {
   const $ = CheerioAPI;
-  const { baseURI } = $._options;
+  const { _options: options } = $;
+  const { baseURI } = options;
 
   $(`${tag}[${attribute}]`).each((_i, el) => {
     const globalSrc = $(el).prop(attribute);
