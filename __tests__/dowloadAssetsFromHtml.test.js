@@ -12,6 +12,19 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 nock.disableNetConnect();
 
 let tempDir;
+const url = 'https://ru.hexlet.io/courses';
+let html;
+let expectedImage;
+let expectedStyle;
+let expectedScript;
+
+beforeAll(async () => {
+  html = await fs.readFile(getFixturePath('before-ru-hexlet-io-courses.html'), 'utf-8');
+
+  expectedImage = await fs.readFile(getFixturePath('nodejs.png'));
+  expectedStyle = await fs.readFile(getFixturePath('application.css'), 'utf-8');
+  expectedScript = await fs.readFile(getFixturePath('runtime.js'), 'utf-8');
+});
 
 beforeEach(async () => {
   tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-imgs-'));
@@ -23,21 +36,6 @@ beforeEach(async () => {
   nock(/ru\.hexlet\.io/)
     .get(/application.css$/)
     .reply(200, expectedStyle);
-});
-
-const url = 'https://ru.hexlet.io/courses';
-let html;
-
-let expectedImage;
-let expectedStyle;
-let expectedScript;
-
-beforeAll(async () => {
-  html = await fs.readFile(getFixturePath('before-ru-hexlet-io-courses.html'), 'utf-8');
-
-  expectedImage = await fs.readFile(getFixturePath('nodejs.png'));
-  expectedStyle = await fs.readFile(getFixturePath('application.css'), 'utf-8');
-  expectedScript = await fs.readFile(getFixturePath('runtime.js'), 'utf-8');
 });
 
 test('dowloaded data', async () => {
@@ -73,10 +71,6 @@ test('empty data on src', async () => {
 
   await dowloadAssetsFromHtml(html, url, tempDir);
 
-  const dowloadedScript = fs.readFile(
-    path.join(tempDir, 'ru-hexlet-io-packs-js-runtime.js'),
-    'utf-8',
-  );
-
-  expect(dowloadedScript).rejects.toThrow();
+  const dowloadedFile = await fs.readdir(tempDir, 'utf-8');
+  expect(dowloadedFile).not.toContain('ru-hexlet-io-packs-js-runtime.js');
 });
