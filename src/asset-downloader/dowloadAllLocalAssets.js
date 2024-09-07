@@ -1,5 +1,5 @@
-import downloadAssetsByTagAttribute from './downloadAssetsByTagAttribute.js';
 import * as cheerio from 'cheerio';
+import downloadAssetsByTagAttribute from './downloadAssetsByTagAttribute.js';
 
 export default function dowloadAllLocalAssets(data, url) {
   const $ = cheerio.load(data, { baseURI: url });
