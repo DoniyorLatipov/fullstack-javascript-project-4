@@ -5,7 +5,7 @@ import splitByExtname from '../url/splitByExtname.js';
 
 export default function writeAssetsToOutput(assets, output) {
   const writtingPromises = assets
-    .filter(([_src, data]) => data)
+    .filter(([, data]) => data)
     .map(([src, data]) => {
       let [noExtnameSrc, extname] = splitByExtname(src);
 
