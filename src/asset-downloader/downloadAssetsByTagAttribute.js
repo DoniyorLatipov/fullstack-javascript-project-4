@@ -1,6 +1,11 @@
 import _ from 'lodash';
-import axios from 'axios';
+import debug from 'debug';
+import { createRequire } from 'module';
 import compareUrlsByHostname from '../url/compareUrlsByHostname.js';
+
+const require = createRequire(import.meta.url);
+const axios = require('axios');
+require('axios-debug-log').addLogger(axios, debug('page-loader:axios'));
 
 export default function downloadAssetsByTagAttribute(CheerioAPI, tag, attribute, requestOptions) {
   const $ = CheerioAPI;
