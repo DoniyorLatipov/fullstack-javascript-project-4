@@ -17,12 +17,17 @@ let html;
 let expectedImage;
 let expectedStyle;
 let expectedScript;
+let expectedCanonical;
 
 beforeAll(async () => {
   html = await fs.readFile(getFixturePath('before-ru-hexlet-io-courses.html'), 'utf-8');
 
   expectedImage = await fs.readFile(getFixturePath('nodejs.png'));
   expectedStyle = await fs.readFile(getFixturePath('application.css'), 'utf-8');
+  expectedCanonical = await fs.readFile(
+    getFixturePath('before-ru-hexlet-io-courses.html'),
+    'utf-8',
+  );
   expectedScript = await fs.readFile(getFixturePath('runtime.js'), 'utf-8');
 });
 
@@ -36,6 +41,10 @@ beforeEach(async () => {
   nock(/ru\.hexlet\.io/)
     .get(/application.css$/)
     .reply(200, expectedStyle);
+
+  nock(/ru\.hexlet\.io/)
+    .get('/courses')
+    .reply(200, expectedCanonical);
 });
 
 test('dowloaded data', async () => {
@@ -54,6 +63,11 @@ test('dowloaded data', async () => {
     'utf-8',
   );
 
+  const dowloadeCanonical = await fs.readFile(
+    path.join(tempDir, 'ru-hexlet-io-courses.html'),
+    'utf-8',
+  );
+
   const dowloadedScript = await fs.readFile(
     path.join(tempDir, 'ru-hexlet-io-packs-js-runtime.js'),
     'utf-8',
@@ -61,6 +75,7 @@ test('dowloaded data', async () => {
 
   expect(dowloadedImage).toEqual(expectedImage);
   expect(dowloadedStyle).toEqual(expectedStyle);
+  expect(dowloadeCanonical).toEqual(expectedCanonical);
   expect(dowloadedScript).toEqual(expectedScript);
 });
 
