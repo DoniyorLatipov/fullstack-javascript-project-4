@@ -3,11 +3,25 @@ import os from 'os';
 import fs from 'fs/promises';
 import path from 'path';
 import nock from 'nock';
+import debug from 'debug';
 import dowloadAssetsFromHtml from '../src/asset-downloader/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+
+const nockDebug = debug('page-loader:nock');
+nock.emitter.on('no match', (req) => {
+  nockDebug('no-match:', req.method, req.path);
+});
+
+nock.emitter.on('request', (req) => {
+  nockDebug('request:', req.method, req.path);
+});
+
+nock.emitter.on('replied', (req) => {
+  nockDebug('replied:', req.method, req.path);
+});
 
 nock.disableNetConnect();
 
@@ -33,7 +47,9 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-imgs-'));
+});
 
+test('dowloaded data', async () => {
   nock(/ru\.hexlet\.io/)
     .get(/nodejs.png$/)
     .reply(200, expectedImage);
@@ -45,9 +61,7 @@ beforeEach(async () => {
   nock(/ru\.hexlet\.io/)
     .get('/courses')
     .reply(200, expectedCanonical);
-});
 
-test('dowloaded data', async () => {
   nock(/ru\.hexlet\.io/)
     .get(/runtime.js$/)
     .reply(200, expectedScript);
