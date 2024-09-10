@@ -17,10 +17,18 @@ export default function downloadAssetsByTagAttribute(CheerioAPI, tag, attribute,
     .toArray()
     .filter((src) => compareUrlsByHostname(src, baseURI));
 
-  const downloadingPromises = localSources.map((src) => axios
-    .get(src, requestOptions)
-    .then(({ data }) => data)
-    .catch(() => null));
+  const downloadingPromises = localSources.map((src) =>
+    axios
+      .get(src, requestOptions)
+      .then((response) => {
+        console.log(`✔ ${response.config.url}`);
+        return response.data;
+      })
+      .catch((res) => {
+        console.error(`✗ ${res.config.url} request error (${res.status})`);
+        return null;
+      }),
+  );
 
   return Promise.all(downloadingPromises).then((data) =>
     _.zip(localSources, data).filter(([, data]) => data),
