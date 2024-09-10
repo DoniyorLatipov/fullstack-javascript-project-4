@@ -4,10 +4,8 @@ import createFilename from '../url/createFilename.js';
 import splitByExtname from '../url/splitByExtname.js';
 
 export default function writeAssetsToOutput(assets, output) {
-  const writtingPromises = assets
-    .filter(([, data]) => data)
-    .map(([src, data]) => {
-      let [noExtnameSrc, extname] = splitByExtname(src);
+  const writtingPromises = assets.map(([src, data]) => {
+    let [noExtnameSrc, extname] = splitByExtname(src);
 
       if (!path.extname(new URL(src).pathname)) {
         noExtnameSrc = src;

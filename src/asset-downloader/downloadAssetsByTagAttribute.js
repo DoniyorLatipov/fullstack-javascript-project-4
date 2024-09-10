@@ -22,5 +22,7 @@ export default function downloadAssetsByTagAttribute(CheerioAPI, tag, attribute,
     .then(({ data }) => data)
     .catch(() => null));
 
-  return Promise.all(downloadingPromises).then((data) => _.zip(localSources, data));
+  return Promise.all(downloadingPromises).then((data) =>
+    _.zip(localSources, data).filter(([, data]) => data),
+  );
 }
