@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import nock from 'nock';
 import debug from 'debug';
+import { jest } from '@jest/globals';
 import dowloadAssetsFromHtml from '../src/asset-downloader/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,10 +47,13 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  jest.restoreAllMocks();
   tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-imgs-'));
 });
 
-test('dowloaded data', async () => {
+test('dowload correct data', async () => {
+  const spyLog = jest.spyOn(console, 'log').mockImplementation(jest.fn());
+
   nock(/ru\.hexlet\.io/)
     .get(/nodejs.png$/)
     .reply(200, expectedImage);
@@ -91,9 +95,35 @@ test('dowloaded data', async () => {
   expect(dowloadedStyle).toEqual(expectedStyle);
   expect(dowloadeCanonical).toEqual(expectedCanonical);
   expect(dowloadedScript).toEqual(expectedScript);
+
+  // logging
+  const expectedAnswers = [
+    '✔ https://ru.hexlet.io/assets/professions/nodejs.png',
+    '✔ https://ru.hexlet.io/assets/application.css',
+    '✔ https://ru.hexlet.io/courses',
+    '✔ https://ru.hexlet.io/packs/js/runtime.js',
+  ];
+  expect(spyLog).toHaveBeenCalledTimes(expectedAnswers.length);
+  expectedAnswers.forEach((answer) => {
+    expect(spyLog).toHaveBeenCalledWith(answer);
+  });
 });
 
 test('empty data on src', async () => {
+  const spyError = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+  nock(/ru\.hexlet\.io/)
+    .get(/nodejs.png$/)
+    .reply(300);
+
+  nock(/ru\.hexlet\.io/)
+    .get(/application.css$/)
+    .reply(400);
+
+  nock(/ru\.hexlet\.io/)
+    .get('/courses')
+    .reply(404);
+
   nock(/ru\.hexlet\.io/)
     .get(/runtime.js$/)
     .reply(500);
@@ -101,5 +131,20 @@ test('empty data on src', async () => {
   await dowloadAssetsFromHtml(html, url, tempDir);
 
   const dowloadedFile = await fs.readdir(tempDir, 'utf-8');
+  expect(dowloadedFile).not.toContain('ru-hexlet-io-assets-application.css');
+  expect(dowloadedFile).not.toContain('ru-hexlet-io-courses.html');
+  expect(dowloadedFile).not.toContain('ru-hexlet-io-assets-professions-nodejs.png');
   expect(dowloadedFile).not.toContain('ru-hexlet-io-packs-js-runtime.js');
+
+  // logging
+  const expectedAnswers = [
+    '✗ https://ru.hexlet.io/assets/professions/nodejs.png request error (300)',
+    '✗ https://ru.hexlet.io/assets/application.css request error (400)',
+    '✗ https://ru.hexlet.io/courses request error (404)',
+    '✗ https://ru.hexlet.io/packs/js/runtime.js request error (500)',
+  ];
+  expect(spyError).toHaveBeenCalledTimes(expectedAnswers.length);
+  expectedAnswers.forEach((answer) => {
+    expect(spyError).toHaveBeenCalledWith(answer);
+  });
 });
