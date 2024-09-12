@@ -11,20 +11,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-const nockDebug = debug('page-loader:nock');
-nock.emitter.on('no match', (req) => {
-  nockDebug('no-match:', req.method, req.path);
-});
-
-nock.emitter.on('request', (req) => {
-  nockDebug('request:', req.method, req.path);
-});
-
-nock.emitter.on('replied', (req) => {
-  nockDebug('replied:', req.method, req.path);
-});
-
 nock.disableNetConnect();
+
+const log = debug('page-loader');
+const logNock = log.extend('nock');
+
+nock.emitter.on('no match', (req) => {
+  logNock('no-match:', req.method, req.path);
+});
 
 let tempDir;
 const url = 'https://ru.hexlet.io/courses';
@@ -48,7 +42,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   jest.restoreAllMocks();
-  tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-imgs-'));
+  tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-assets-'));
 });
 
 test('dowload correct data', async () => {
