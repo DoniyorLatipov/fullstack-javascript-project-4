@@ -3,10 +3,13 @@ import createFilename from '../url/createFilename.js';
 import splitByExtname from '../url/splitByExtname.js';
 import compareUrlsByHostname from '../url/compareUrlsByHostname.js';
 
-export default function makeLocalTagAttributes(CheerioAPI, tag, attribute, assetsDirname) {
-  const $ = CheerioAPI;
-  const { _options: options } = $;
-  const { baseURI } = options;
+export default function makeLocalTagAttributes(
+  { cheerio, baseURI },
+  tag,
+  attribute,
+  assetsDirname,
+) {
+  const $ = cheerio;
 
   $(`${tag}[${attribute}]`).each((_i, el) => {
     const globalSrc = $(el).prop(attribute);

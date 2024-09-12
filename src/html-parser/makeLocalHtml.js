@@ -4,8 +4,8 @@ import makeLocalTagAttributes from './makeLocalTagAttributes.js';
 
 export default function makeLocalHtml(data, url, assetsDirname) {
   return Promise.resolve(cheerio.load(data, { baseURI: url }))
-    .then(($) => makeLocalTagAttributes($, 'img', 'src', assetsDirname))
-    .then(($LocaledImgs) => makeLocalTagAttributes($LocaledImgs, 'link', 'href', assetsDirname))
-    .then(($LocaledLinks) => makeLocalTagAttributes($LocaledLinks, 'script', 'src', assetsDirname))
-    .then(($AllLocaled) => prettierHtml($AllLocaled.html()));
+    .then(($) => makeLocalTagAttributes({ cheerio: $, baseURI: url }, 'img', 'src', assetsDirname))
+    .then(($LocImgs) => makeLocalTagAttributes({ cheerio: $LocImgs, baseURI: url }, 'link', 'href', assetsDirname))
+    .then(($LocLinks) => makeLocalTagAttributes({ cheerio: $LocLinks, baseURI: url }, 'script', 'src', assetsDirname))
+    .then(($LocAll) => prettierHtml($LocAll.html()));
 }
