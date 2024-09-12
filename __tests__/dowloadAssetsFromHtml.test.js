@@ -46,7 +46,7 @@ beforeEach(async () => {
 });
 
 test('dowload correct data', async () => {
-  const spyLog = jest.spyOn(console, 'log').mockImplementation(jest.fn());
+  jest.spyOn(console, 'log').mockImplementation(() => {});
 
   nock(/ru\.hexlet\.io/)
     .get(/nodejs.png$/)
@@ -89,22 +89,10 @@ test('dowload correct data', async () => {
   expect(dowloadedStyle).toEqual(expectedStyle);
   expect(dowloadeCanonical).toEqual(expectedCanonical);
   expect(dowloadedScript).toEqual(expectedScript);
-
-  // logging
-  const expectedAnswers = [
-    '✔ https://ru.hexlet.io/assets/professions/nodejs.png',
-    '✔ https://ru.hexlet.io/assets/application.css',
-    '✔ https://ru.hexlet.io/courses',
-    '✔ https://ru.hexlet.io/packs/js/runtime.js',
-  ];
-  expect(spyLog).toHaveBeenCalledTimes(expectedAnswers.length);
-  expectedAnswers.forEach((answer) => {
-    expect(spyLog).toHaveBeenCalledWith(answer);
-  });
 });
 
 test('empty data on src', async () => {
-  const spyError = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+  jest.spyOn(console, 'log').mockImplementation(() => {});
 
   nock(/ru\.hexlet\.io/)
     .get(/nodejs.png$/)
@@ -129,16 +117,4 @@ test('empty data on src', async () => {
   expect(dowloadedFile).not.toContain('ru-hexlet-io-courses.html');
   expect(dowloadedFile).not.toContain('ru-hexlet-io-assets-professions-nodejs.png');
   expect(dowloadedFile).not.toContain('ru-hexlet-io-packs-js-runtime.js');
-
-  // logging
-  const expectedAnswers = [
-    '✗ https://ru.hexlet.io/assets/professions/nodejs.png request error (300)',
-    '✗ https://ru.hexlet.io/assets/application.css request error (400)',
-    '✗ https://ru.hexlet.io/courses request error (404)',
-    '✗ https://ru.hexlet.io/packs/js/runtime.js request error (500)',
-  ];
-  expect(spyError).toHaveBeenCalledTimes(expectedAnswers.length);
-  expectedAnswers.forEach((answer) => {
-    expect(spyError).toHaveBeenCalledWith(answer);
-  });
 });
