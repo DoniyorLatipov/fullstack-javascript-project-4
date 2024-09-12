@@ -4,6 +4,22 @@ import createFilename from './url/createFilename.js';
 import makeLocalHtml from './html-parser/makeLocalHtml.js';
 import downloadAssetsFromHtml from './asset-downloader/index.js';
 
+function checkDirectory(dirpath) {
+  return fs
+    .readdir(dirpath)
+    .then(() => fs.access(dirpath, fs.constants.W_OK))
+    .catch((e) => {
+      switch (e.errno) {
+        case -13:
+          throw new Error(`permission denied, writing to '${dirpath}' not allowed`);
+        case -2:
+          throw new Error(`no such directory, open '${dirpath}'`);
+        default:
+          throw new Error(`can not write in '${dirpath}' (${e.code})`);
+      }
+    });
+}
+
 export default function outputDataTo(response, outputDir) {
   const { data } = response;
   const { url } = response.config;
@@ -14,22 +30,7 @@ export default function outputDataTo(response, outputDir) {
   const assetsDirname = createFilename(url, '_files');
   const assetsDirpath = path.join(outputDir, assetsDirname);
 
-  return fs
-    .access(outputDir, fs.constants.W_OK)
-    .catch((e) => {
-      switch (e.errno) {
-        case -13:
-          console.error(`Error: permission denied, writing to '${outputDir}' not allowed`);
-          break;
-        case -2:
-          console.error(`Error: no such file or directory, open '${outputDir}'`);
-          break;
-        default:
-          console.error(`Error: can not write in '${outputDir}' (${e.code})`);
-      }
-
-      throw new Error();
-    })
+  return checkDirectory(outputDir)
     .then(() => makeLocalHtml(data, url, assetsDirname))
     .then((localedHtml) => fs.writeFile(htmlFilepath, localedHtml))
     .then(() => fs.mkdir(assetsDirpath))
