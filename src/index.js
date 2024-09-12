@@ -6,12 +6,12 @@ export default (url, outputDir) => {
     .get(url)
     .catch((errorRequest) => {
       const requestStatus = errorRequest.status ? ` (${errorRequest.status})` : '';
-      console.error(`Error: can not connect to '${errorRequest.config.url}'${requestStatus}`);
-      throw new Error();
+      throw new Error(`can not connect to '${errorRequest.config.url}'${requestStatus}`);
     })
     .then((response) => outputDataTo(response, outputDir))
     .then((filepath) => console.log(filepath))
-    .catch(() => {
+    .catch((e) => {
+      console.error(`Error: ${e.message}`);
       process.exitCode = 1;
     })
     .then(() => process.exit());
