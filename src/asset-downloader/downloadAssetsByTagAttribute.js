@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import debug from 'debug';
 import { createRequire } from 'module';
+import Listr from 'listr';
 import compareUrlsByHostname from '../url/compareUrlsByHostname.js';
 
 const require = createRequire(import.meta.url);
@@ -17,19 +17,21 @@ export default function downloadAssetsByTagAttribute(CheerioAPI, tag, attribute,
     .toArray()
     .filter((src) => compareUrlsByHostname(src, baseURI));
 
-  const downloadingPromises = localSources.map((src) => axios
-    .get(src, requestOptions)
-    .then((response) => {
-      console.log(`✔ ${response.config.url}`);
-      return response.data;
-    })
-    .catch((response) => {
-      console.error(`✗ ${response.config.url} request error (${response.status})`);
-      return null;
-    }));
+  const downloadingTasks = localSources.map((src) => ({
+    title: src,
+    task: (ctx) => axios
+      .get(src, requestOptions)
+      .then(({ data }) => {
+        ctx[src] = data;
+      })
+      .catch(() => null),
+  }));
 
-  const parsedDataPromise = Promise.all(downloadingPromises).then((data) => {
-    const parsedData = _.zip(localSources, data).filter(([, responseData]) => responseData);
+  const listrTasks = new Listr(downloadingTasks, { concurrent: true });
+
+  const parsedDataPromise = listrTasks.run().then((ctx) => {
+    const parsedData = localSources.map((src) => [src, ctx[src]]).filter(([, data]) => data);
+
     return parsedData;
   });
 
