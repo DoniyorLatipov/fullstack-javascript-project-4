@@ -7,14 +7,20 @@ export default function dowloadAllLocalAssets(data, url) {
   let imageAssets;
   let linkAssets;
   let scriptAssets;
-  return downloadAssetsByTagAttribute($, 'img', 'src', { responseType: 'arraybuffer' })
+  return downloadAssetsByTagAttribute({ cheerio: $, baseURI: url }, 'img', 'src', {
+    responseType: 'arraybuffer',
+  })
     .then((imageData) => {
       imageAssets = imageData;
-      return downloadAssetsByTagAttribute($, 'link', 'href', { responseType: 'text' });
+      return downloadAssetsByTagAttribute({ cheerio: $, baseURI: url }, 'link', 'href', {
+        responseType: 'text',
+      });
     })
     .then((styleData) => {
       linkAssets = styleData;
-      return downloadAssetsByTagAttribute($, 'script', 'src', { responseType: 'text' });
+      return downloadAssetsByTagAttribute({ cheerio: $, baseURI: url }, 'script', 'src', {
+        responseType: 'text',
+      });
     })
     .then((scriptData) => {
       scriptAssets = scriptData;
