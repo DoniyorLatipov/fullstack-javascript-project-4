@@ -19,8 +19,8 @@ function nockScopeStatusLogger(scope) {
   const mark = scope.isDone() ? '✔ Done' : '✗ Unused';
   scope.interceptors.forEach((interceptor) => {
     const { method, statusCod } = interceptor;
-    const path = interceptor.path.toString().replace(/\$\//g, '');
-    logNock(mark, method, path, statusCod);
+    const pathname = interceptor.path.toString().replace(/\$\//g, '');
+    logNock(mark, method, pathname, statusCod);
   });
 }
 
