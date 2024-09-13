@@ -12,7 +12,7 @@ export default function makeLocalTagAttributes(
   const $ = cheerio;
 
   $(`${tag}[${attribute}]`).each((_i, el) => {
-    const globalSrc = $(el).prop(attribute);
+    const globalSrc = new URL($(el).prop(attribute), baseURI).href;
 
     if (!compareUrlsByHostname(globalSrc, baseURI)) {
       return;
