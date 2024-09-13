@@ -16,7 +16,7 @@ export default function downloadAssetsByTagAttribute(
   const $ = cheerio;
 
   const localSources = $(`${tag}[${attribute}]`)
-    .map((_i, el) => $(el).prop(attribute))
+    .map((_i, el) => new URL($(el).prop(attribute), baseURI).href)
     .toArray()
     .filter((src) => compareUrlsByHostname(src, baseURI));
 
