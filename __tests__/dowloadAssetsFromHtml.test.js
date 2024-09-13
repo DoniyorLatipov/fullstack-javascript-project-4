@@ -20,6 +20,15 @@ nock.emitter.on('no match', (req) => {
   logNock('no-match:', req.method, req.path);
 });
 
+function nockScopeStatusLogger(scope) {
+  const mark = scope.isDone() ? '✔ Done' : '✗ Unused';
+  scope.interceptors.forEach((interceptor) => {
+    const { method } = interceptor;
+    const path = interceptor.path.toString().replace(/\$\//g, '');
+    logNock(mark, method, path);
+  });
+}
+
 let tempDir;
 const url = 'https://ru.hexlet.io/courses';
 let html;
@@ -48,23 +57,18 @@ beforeEach(async () => {
 test('dowload correct data', async () => {
   jest.spyOn(console, 'log').mockImplementation(() => {});
 
-  nock(/ru\.hexlet\.io/)
+  const scope = nock(/ru\.hexlet\.io/)
     .get(/nodejs.png$/)
-    .reply(200, expectedImage);
-
-  nock(/ru\.hexlet\.io/)
+    .reply(200, expectedImage)
     .get(/application.css$/)
-    .reply(200, expectedStyle);
-
-  nock(/ru\.hexlet\.io/)
+    .reply(200, expectedStyle)
     .get('/courses')
-    .reply(200, expectedCanonical);
-
-  nock(/ru\.hexlet\.io/)
+    .reply(200, expectedCanonical)
     .get(/runtime.js$/)
     .reply(200, expectedScript);
 
   await dowloadAssetsFromHtml(html, url, tempDir);
+  nockScopeStatusLogger(scope);
 
   const dowloadedImage = await fs.readFile(
     path.join(tempDir, 'ru-hexlet-io-assets-professions-nodejs.png'),
@@ -94,23 +98,18 @@ test('dowload correct data', async () => {
 test('empty data on src', async () => {
   jest.spyOn(console, 'log').mockImplementation(() => {});
 
-  nock(/ru\.hexlet\.io/)
+  const scope = nock(/ru\.hexlet\.io/)
     .get(/nodejs.png$/)
-    .reply(300);
-
-  nock(/ru\.hexlet\.io/)
+    .reply(300)
     .get(/application.css$/)
-    .reply(400);
-
-  nock(/ru\.hexlet\.io/)
+    .reply(400)
     .get('/courses')
-    .reply(404);
-
-  nock(/ru\.hexlet\.io/)
+    .reply(404)
     .get(/runtime.js$/)
     .reply(500);
 
   await dowloadAssetsFromHtml(html, url, tempDir);
+  nockScopeStatusLogger(scope);
 
   const dowloadedFile = await fs.readdir(tempDir, 'utf-8');
   expect(dowloadedFile).not.toContain('ru-hexlet-io-assets-application.css');

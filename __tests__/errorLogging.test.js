@@ -15,6 +15,15 @@ nock.emitter.on('no match', (req) => {
   logNock('no-match:', req.method, req.path);
 });
 
+function nockScopeStatusLogger(scope) {
+  const mark = scope.isDone() ? '✔ Done' : '✗ Unused';
+  scope.interceptors.forEach((interceptor) => {
+    const { method, statusCod } = interceptor;
+    const path = interceptor.path.toString().replace(/\$\//g, '');
+    logNock(mark, method, path, statusCod);
+  });
+}
+
 beforeEach(async () => {
   jest.restoreAllMocks();
 });
@@ -31,29 +40,34 @@ beforeEach(async () => {
 
 describe('http error', () => {
   test('rejected request (status)', async () => {
-    nock(/ru\.hexlet\.io/)
+    const scope = nock(/ru\.hexlet\.io/)
       .get('/courses')
       .reply(500);
 
     await loadPage('https://ru.hexlet.io/courses', tempDir);
+    nockScopeStatusLogger(scope);
+
     expect(spy).toHaveBeenCalledWith(
-      'Error: can not connect to \'https://ru.hexlet.io/courses\' (500)',
+      "Error: can not connect to 'https://ru.hexlet.io/courses' (500)",
     );
   });
 
   test('request with error (no status)', async () => {
-    nock(/ru\.hexlet\.io/)
+    const scope = nock(/ru\.hexlet\.io/)
       .get('/courses')
       .replyWithError('error');
 
     await loadPage('https://ru.hexlet.io/courses', tempDir);
-    expect(spy).toHaveBeenCalledWith('Error: can not connect to \'https://ru.hexlet.io/courses\'');
+    nockScopeStatusLogger(scope);
+
+    expect(spy).toHaveBeenCalledWith("Error: can not connect to 'https://ru.hexlet.io/courses'");
   });
 });
 
 describe('log fs errors', () => {
+  let scope;
   beforeEach(async () => {
-    nock(/ru\.hexlet\.io/)
+    scope = nock(/ru\.hexlet\.io/)
       .get('/courses')
       .reply(200, 'test');
   });
@@ -62,6 +76,8 @@ describe('log fs errors', () => {
     await fs.chmod(tempDir, 0o000);
 
     await loadPage('https://ru.hexlet.io/courses', tempDir);
+    nockScopeStatusLogger(scope);
+
     expect(spy).toHaveBeenCalledWith(
       `Error: permission denied, writing to '${tempDir}' not allowed`,
     );
@@ -71,6 +87,8 @@ describe('log fs errors', () => {
     await fs.rm(tempDir, { recursive: true, force: true });
 
     await loadPage('https://ru.hexlet.io/courses', tempDir);
+    nockScopeStatusLogger(scope);
+
     expect(spy).toHaveBeenCalledWith(`Error: no such directory, open '${tempDir}'`);
   });
 
@@ -79,6 +97,8 @@ describe('log fs errors', () => {
     await fs.writeFile(filepath, 'hexlet');
 
     await loadPage('https://ru.hexlet.io/courses', filepath);
+    nockScopeStatusLogger(scope);
+
     expect(spy).toHaveBeenCalledWith(`Error: can not write in '${filepath}' (ENOTDIR)`);
   });
 });
