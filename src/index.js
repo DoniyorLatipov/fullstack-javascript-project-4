@@ -10,10 +10,10 @@ export default (url, outputDir) => {
     })
     .then((response) => outputDataTo(response, outputDir))
     .then((filepath) => console.log(`Page was successfully downloaded into: '${filepath}'`))
+    .then(() => process.exit(0))
     .catch((e) => {
       console.error(`Error: ${e.message}`);
-      process.exitCode = 1;
-    })
-    .then(() => process.exit());
+      process.exit(1);
+    });
   return parsingPromise;
 };
