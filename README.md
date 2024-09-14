@@ -134,3 +134,14 @@ DEBUG=page-loader:nock ...
 ```
 
 [![asciicast](https://asciinema.org/a/EBEuPMWzxnmDNWnSxXtbjvCDJ.svg)](https://asciinema.org/a/EBEuPMWzxnmDNWnSxXtbjvCDJ)
+
+### Linting and testing:
+
+```bash
+#testing:
+npm test
+make test-coverage
+
+#linting:
+make lint
+```
