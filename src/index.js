@@ -12,7 +12,6 @@ export default (url, outputDir) => {
     .then((filepath) => console.log(`Page was successfully downloaded into: '${filepath}'`))
     .catch((e) => {
       console.error(`Error: ${e.message}`);
-      process.exit(1);
     });
   return parsingPromise;
 };
