@@ -9,9 +9,6 @@ export default (url, outputDir) => {
       throw new Error(`can not connect to '${errorRequest.config.url}'${requestStatus}`);
     })
     .then((response) => outputDataTo(response, outputDir))
-    .then((filepath) => console.log(`Page was successfully downloaded into: '${filepath}'`))
-    .catch((e) => {
-      console.error(`Error: ${e.message}`);
-    });
+    .then((filepath) => console.log(`Page was successfully downloaded into: '${filepath}'`));
   return parsingPromise;
 };
