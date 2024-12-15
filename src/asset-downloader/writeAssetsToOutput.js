@@ -13,7 +13,7 @@ export default function writeAssetsToOutput(assets, output) {
     }
 
     const filename = createFilename(noExtnameSrc, extname);
-    return fs.writeFile(path.join(output, filename), data.trim());
+    return fs.writeFile(path.join(output, filename), data);
   });
 
   return Promise.all(writtingPromises);
