@@ -7,11 +7,11 @@ import loadPage from '../src/index.js';
 program
   .description('Downloading web pages with local assets')
   .version('1.0.0', '-V, --version', 'output the version number')
+  .helpOption('-h, --help', 'output usage information')
   .option('-o, --output [dir]', 'output dir', process.cwd())
   .argument('<url>')
   .action((url, options) => {
     loadPage(url, options.output);
-  })
-  .helpOption('-h, --help', 'output usage information');
+  });
 
 program.parse();
