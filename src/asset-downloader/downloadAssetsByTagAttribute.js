@@ -17,13 +17,12 @@ export default function downloadAssetsByTagAttribute(cheerio, baseURI, tag, attr
 
   const downloadingTasks = localSources.map((src) => ({
     title: src,
-    task: (ctx) =>
-      axios
-        .get(src, { responseType: 'arraybuffer' })
-        .then(({ data }) => {
-          ctx[src] = data;
-        })
-        .catch(() => null),
+    task: (ctx) => axios
+      .get(src, { responseType: 'arraybuffer' })
+      .then(({ data }) => {
+        ctx[src] = data;
+      })
+      .catch(() => null),
   }));
 
   const listrTasks = new Listr(downloadingTasks, { concurrent: true });

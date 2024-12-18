@@ -12,11 +12,13 @@ export default function dowloadAllLocalAssets(data, url) {
   const $ = cheerio.load(data, { baseURI: url });
 
   const promises = arrayRequests.map(([tag, attribute]) => {
-    return downloadAssetsByTagAttribute($, url, tag, attribute);
+    const promise = downloadAssetsByTagAttribute($, url, tag, attribute);
+    return promise;
   });
 
   const assetsDataPromise = Promise.all(promises).then((dataArray) => {
-    return dataArray.reduce((acc, data) => [...acc, ...data], []);
+    const assetsDataArray = dataArray.reduce((acc, assetsArray) => [...acc, ...assetsArray], []);
+    return assetsDataArray;
   });
 
   return assetsDataPromise;

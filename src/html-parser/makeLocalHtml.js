@@ -11,8 +11,14 @@ const arrayRequests = [
 
 export default function makeLocalHtml(data, url, assetsDirname) {
   const $ = cheerio.load(data, { baseURI: url });
-  const localedCherioPromise = arrayRequests.reduce((acc, [tag, attribute]) => {
-    return acc.then((cheerio) => makeLocalTagAttributes({ cheerio, baseURI: url }, tag, attribute, assetsDirname));
-  }, Promise.resolve($));
+  const localedCherioPromise = arrayRequests.reduce(
+    (acc, [tag, attribute]) => acc.then((newCheerio) => makeLocalTagAttributes(
+      { cheerio: newCheerio, baseURI: url },
+      tag,
+      attribute,
+      assetsDirname,
+    )),
+    Promise.resolve($),
+  );
   return localedCherioPromise.then((localedCherio) => prettierHtml(localedCherio.html()));
 }
