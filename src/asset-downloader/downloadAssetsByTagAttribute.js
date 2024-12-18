@@ -7,12 +7,7 @@ const require = createRequire(import.meta.url);
 const axios = require('axios');
 require('axios-debug-log').addLogger(axios, debug('page-loader').extend('axios'));
 
-export default function downloadAssetsByTagAttribute(
-  { cheerio, baseURI },
-  tag,
-  attribute,
-  requestOptions,
-) {
+export default function downloadAssetsByTagAttribute(cheerio, baseURI, tag, attribute) {
   const $ = cheerio;
 
   const localSources = $(`${tag}[${attribute}]`)
@@ -22,12 +17,13 @@ export default function downloadAssetsByTagAttribute(
 
   const downloadingTasks = localSources.map((src) => ({
     title: src,
-    task: (ctx) => axios
-      .get(src, requestOptions)
-      .then(({ data }) => {
-        ctx[src] = data;
-      })
-      .catch(() => null),
+    task: (ctx) =>
+      axios
+        .get(src, { responseType: 'arraybuffer' })
+        .then(({ data }) => {
+          ctx[src] = data;
+        })
+        .catch(() => null),
   }));
 
   const listrTasks = new Listr(downloadingTasks, { concurrent: true });

@@ -1,29 +1,23 @@
 import * as cheerio from 'cheerio';
 import downloadAssetsByTagAttribute from './downloadAssetsByTagAttribute.js';
 
+const arrayRequests = [
+  ['img', 'src'],
+  ['source', 'srcset'],
+  ['link', 'href'],
+  ['script', 'src'],
+];
+
 export default function dowloadAllLocalAssets(data, url) {
   const $ = cheerio.load(data, { baseURI: url });
 
-  let imageAssets;
-  let linkAssets;
-  let scriptAssets;
-  return downloadAssetsByTagAttribute({ cheerio: $, baseURI: url }, 'img', 'src', {
-    responseType: 'arraybuffer',
-  })
-    .then((imageData) => {
-      imageAssets = imageData;
-      return downloadAssetsByTagAttribute({ cheerio: $, baseURI: url }, 'link', 'href', {
-        responseType: 'text',
-      });
-    })
-    .then((styleData) => {
-      linkAssets = styleData;
-      return downloadAssetsByTagAttribute({ cheerio: $, baseURI: url }, 'script', 'src', {
-        responseType: 'text',
-      });
-    })
-    .then((scriptData) => {
-      scriptAssets = scriptData;
-      return [...imageAssets, ...linkAssets, ...scriptAssets];
-    });
+  const promises = arrayRequests.map(([tag, attribute]) => {
+    return downloadAssetsByTagAttribute($, url, tag, attribute);
+  });
+
+  const assetsDataPromise = Promise.all(promises).then((dataArray) => {
+    return dataArray.reduce((acc, data) => [...acc, ...data], []);
+  });
+
+  return assetsDataPromise;
 }
