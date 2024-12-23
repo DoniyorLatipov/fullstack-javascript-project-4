@@ -1,7 +1,8 @@
 import axios from 'axios';
+import process from 'process';
 import outputDataTo from './outputDataTo.js';
 
-export default (url, outputDir) => {
+export default (url, outputDir = process.cwd()) => {
   const parsingPromise = axios
     .get(url)
     .catch((errorRequest) => {
