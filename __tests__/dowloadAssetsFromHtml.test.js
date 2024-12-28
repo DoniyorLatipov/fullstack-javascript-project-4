@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import nock from 'nock';
 import debug from 'debug';
-import { jest } from '@jest/globals';
+import { jest, beforeAll, beforeEach, test, expect } from '@jest/globals';
 import dowloadAssetsFromHtml from '../src/asset-downloader/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
