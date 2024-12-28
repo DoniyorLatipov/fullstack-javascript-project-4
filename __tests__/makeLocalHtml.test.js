@@ -1,7 +1,9 @@
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import path from 'path';
-import { beforeAll, beforeEach, test, expect } from '@jest/globals';
+import {
+  beforeAll, beforeEach, test, expect,
+} from '@jest/globals';
 import prettierHtml from '../src/html-parser/prettierHtml.js';
 import makeLocalHtml from '../src/html-parser/makeLocalHtml.js';
 
